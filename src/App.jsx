@@ -1,77 +1,69 @@
 import { useState, useEffect } from "react";
-import { Card, Typography } from "antd";
+import { Card, Typography, Space } from "antd";
 import dayjs from "dayjs";
+import "./index.css";
 
 const { Title, Text } = Typography;
 
-// Данные времени Магриб-намаза для Грозного на март (пример)
 const prayerTimes = {
-  "2025-03-01": "17:48",
-  "2025-03-02": "17:50",
-  "2025-03-03": "17:51",
-  "2025-03-04": "17:52",
-  "2025-03-05": "17:54",
-  "2025-03-06": "17:55",
-  "2025-03-07": "17:56",
-  "2025-03-08": "17:57",
-  "2025-03-09": "17:58",
-  "2025-03-10": "18:00",
-  "2025-03-11": "18:01",
-  "2025-03-12": "18:02",
-  "2025-03-13": "18:03",
-  "2025-03-14": "18:04",
-  "2025-03-15": "18:05",
-  "2025-03-16": "18:06",
-  "2025-03-17": "18:07",
-  "2025-03-18": "18:08",
-  "2025-03-19": "18:09",
-  "2025-03-20": "18:10",
-  "2025-03-21": "18:11",
-  "2025-03-22": "18:12",
-  "2025-03-23": "18:13",
-  "2025-03-24": "18:14",
-  "2025-03-25": "18:15",
-  "2025-03-26": "18:16",
-  "2025-03-27": "18:17",
-  "2025-03-28": "18:18",
-  "2025-03-29": "18:19",
-  "2025-03-30": "18:20",
-  "2025-03-31": "18:21"
+  "2025-03-01": { maghrib: "17:48", isha: "19:18" },
+  "2025-03-02": { maghrib: "17:50", isha: "19:19" },
+  "2025-03-03": { maghrib: "17:51", isha: "19:20" },
+  "2025-03-04": { maghrib: "17:52", isha: "19:21" },
+  "2025-03-05": { maghrib: "17:54", isha: "19:23" },
+  "2025-03-06": { maghrib: "17:55", isha: "19:24" },
+  "2025-03-07": { maghrib: "17:56", isha: "19:25" },
+  "2025-03-08": { maghrib: "17:57", isha: "19:26" },
+  "2025-03-09": { maghrib: "17:58", isha: "19:28" },
+  "2025-03-10": { maghrib: "18:00", isha: "19:29" }
 };
 
+function getTimeLeft(targetTime) {
+  const now = dayjs();
+  const target = dayjs(`${dayjs().format("YYYY-MM-DD")} ${targetTime}`);
+  const diff = target.diff(now, "second");
+
+  if (diff > 0) {
+    const hours = Math.floor(diff / 3600);
+    const minutes = Math.floor((diff % 3600) / 60);
+    const seconds = diff % 60;
+    return `${hours}ч ${minutes}м ${seconds}с`;
+  }
+  return "Время намаза наступило";
+}
+
 function App() {
-  const [timeLeft, setTimeLeft] = useState("");
   const today = dayjs().format("YYYY-MM-DD");
-  const maghribTime = prayerTimes[today] || "18:00"; // Если нет данных, берем 18:00
-  const maghribDateTime = dayjs(`${today} ${maghribTime}`);
+  const maghribTime = prayerTimes[today]?.maghrib || "18:00";
+  const ishaTime = prayerTimes[today]?.isha || "19:30";
+
+  const [timeLeftMaghrib, setTimeLeftMaghrib] = useState(getTimeLeft(maghribTime));
+  const [timeLeftIsha, setTimeLeftIsha] = useState(getTimeLeft(ishaTime));
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const now = dayjs();
-      const diff = maghribDateTime.diff(now, "second");
-
-      if (diff > 0) {
-        const hours = Math.floor(diff / 3600);
-        const minutes = Math.floor((diff % 3600) / 60);
-        const seconds = diff % 60;
-        setTimeLeft(`${hours}ч ${minutes}м ${seconds}с`);
-      } else {
-        setTimeLeft("Время Магриб-намаза наступило");
-      }
+      setTimeLeftMaghrib(getTimeLeft(maghribTime));
+      setTimeLeftIsha(getTimeLeft(ishaTime));
     }, 1000);
-
     return () => clearInterval(interval);
-  }, [maghribDateTime]);
+  }, [maghribTime, ishaTime]);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f0f2f5" }}>
-      <Card style={{ width: 400, textAlign: "center", background: "#fff", borderRadius: 8 }}>
-        <Title level={3}>Оставшееся время до Магриб-намаза</Title>
-        <Text strong style={{ fontSize: 24, color: "#1890ff" }}>{timeLeft}</Text>
-        <div style={{ marginTop: 16 }}>
+    <div className="container">
+      <Space direction="vertical" size={20}>
+        <Card className="card">
+          <Title level={3}>Время до Магриб-намаза</Title>
+          <Text className="time">{timeLeftMaghrib}</Text>
+          <br />
           <Text type="secondary">Время Магриб-намаза: {maghribTime}</Text>
-        </div>
-      </Card>
+        </Card>
+        <Card className="card">
+          <Title level={3}>Время до Иша-намаза</Title>
+          <Text className="time">{timeLeftIsha}</Text>
+          <br />
+          <Text type="secondary">Время Иша-намаза: {ishaTime}</Text>
+        </Card>
+      </Space>
     </div>
   );
 }

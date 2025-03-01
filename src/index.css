@@ -1,3 +1,14 @@
+/* src/index.css */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f0f2f5;
+  font-family: Arial, sans-serif;
+}
+
+  
+
+
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
