@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, Typography, Space } from "antd";
 import dayjs from "dayjs";
-import "./index.css";
+import "./App.css";
 
 const { Title, Text } = Typography;
 
@@ -15,7 +15,7 @@ const prayerTimes = {
   "2025-03-07": { maghrib: "17:56", isha: "19:25" },
   "2025-03-08": { maghrib: "17:57", isha: "19:26" },
   "2025-03-09": { maghrib: "17:58", isha: "19:28" },
-  "2025-03-10": { maghrib: "18:00", isha: "19:29" }
+  "2025-03-10": { maghrib: "18:00", isha: "19:29" },
 };
 
 function getTimeLeft(targetTime) {
@@ -37,7 +37,9 @@ function App() {
   const maghribTime = prayerTimes[today]?.maghrib || "18:00";
   const ishaTime = prayerTimes[today]?.isha || "19:30";
 
-  const [timeLeftMaghrib, setTimeLeftMaghrib] = useState(getTimeLeft(maghribTime));
+  const [timeLeftMaghrib, setTimeLeftMaghrib] = useState(
+    getTimeLeft(maghribTime)
+  );
   const [timeLeftIsha, setTimeLeftIsha] = useState(getTimeLeft(ishaTime));
 
   useEffect(() => {
